@@ -1,6 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from server.agent import chat
 
 app = FastAPI()
 
@@ -19,4 +20,8 @@ class ChatRequest(BaseModel):
 
 @app.post("/api/chat")
 async def handle_chat(body: ChatRequest):
-    return {"reply": f"Echo: {body.message}", "history": body.history}
+    try:
+        reply, updated_history = chat(body.message, body.history)
+        return {"reply": reply, "history": updated_history}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
