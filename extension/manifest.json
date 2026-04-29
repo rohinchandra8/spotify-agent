@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Spotify Agent",
+  "version": "1.0.0",
+  "description": "AI assistant embedded in the Spotify web player",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://open.spotify.com/*",
+    "https://spotify-agent-eight.vercel.app/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://open.spotify.com/*"],
+      "js": ["config.js", "content.js"],
+      "css": ["widget.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
