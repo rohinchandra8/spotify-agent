@@ -145,24 +145,25 @@
     const thinking = addMessage("Thinking…", "thinking");
 
     try {
-      const response = await new Promise((resolve, reject) => {
-        chrome.runtime.sendMessage({ type: "CHAT", message: text, history }, (res) => {
-          if (chrome.runtime.lastError) reject(new Error(chrome.runtime.lastError.message));
-          else resolve(res);
-        });
+      const res = await fetch(`${BACKEND_URL}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text, history }),
       });
 
       thinking.remove();
 
-      if (response.error) {
-        addMessage("Something went wrong. Please try again.", "agent");
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        addMessage(`Error: ${err.detail || res.statusText}`, "agent");
       } else {
-        history = response.history;
-        addMessage(response.reply, "agent");
+        const data = await res.json();
+        history = data.history;
+        addMessage(data.reply, "agent");
       }
     } catch (err) {
       thinking.remove();
-      addMessage("Could not reach the agent. Is the server running?", "agent");
+      addMessage(`Could not reach the agent: ${err.message}`, "agent");
     } finally {
       input.disabled = false;
       sendBtn.disabled = false;

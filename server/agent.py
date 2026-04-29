@@ -26,6 +26,17 @@ TOOL_DISPATCH = {
 }
 
 
+def _serialize_content(content) -> list[dict]:
+    """Convert Anthropic SDK content blocks to plain dicts for JSON serialization."""
+    result = []
+    for block in content:
+        if block.type == "text":
+            result.append({"type": "text", "text": block.text})
+        elif block.type == "tool_use":
+            result.append({"type": "tool_use", "id": block.id, "name": block.name, "input": block.input})
+    return result
+
+
 def chat(message: str, history: list) -> tuple[str, list]:
     sp = get_spotify_client()
     history = history + [{"role": "user", "content": message}]
@@ -45,6 +56,7 @@ def chat(message: str, history: list) -> tuple[str, list]:
             return reply, history
 
         # Handle tool calls
+        serialized = _serialize_content(response.content)
         tool_results = []
         for block in response.content:
             if block.type == "tool_use":
@@ -56,6 +68,6 @@ def chat(message: str, history: list) -> tuple[str, list]:
                 })
 
         history = history + [
-            {"role": "assistant", "content": response.content},
+            {"role": "assistant", "content": serialized},
             {"role": "user", "content": tool_results},
         ]
