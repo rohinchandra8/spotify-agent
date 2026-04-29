@@ -16,7 +16,7 @@ SCOPES = "playlist-read-private playlist-modify-public playlist-modify-private u
 auth = SpotifyOAuth(
     client_id=os.getenv("SPOTIFY_CLIENT_ID"),
     client_secret=os.getenv("SPOTIFY_CLIENT_SECRET"),
-    redirect_uri=os.getenv("SPOTIFY_REDIRECT_URI", "http://localhost:8888/callback"),
+    redirect_uri=os.getenv("SPOTIFY_REDIRECT_URI", "http://127.0.0.1:8888/callback"),
     scope=SCOPES,
     cache_path=".cache",
 )

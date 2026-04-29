@@ -12,7 +12,7 @@ def get_spotify_client() -> spotipy.Spotify:
     auth = SpotifyOAuth(
         client_id=os.getenv("SPOTIFY_CLIENT_ID"),
         client_secret=os.getenv("SPOTIFY_CLIENT_SECRET"),
-        redirect_uri=os.getenv("SPOTIFY_REDIRECT_URI", "http://localhost:8888/callback"),
+        redirect_uri=os.getenv("SPOTIFY_REDIRECT_URI", "http://127.0.0.1:8888/callback"),
         scope=SCOPES,
     )
     token_info = auth.refresh_access_token(os.getenv("SPOTIFY_REFRESH_TOKEN"))
